@@ -45,7 +45,10 @@ class Reaction(object):
         pass
         
 class ConstInduction(Reaction):
-    """Specific Reaction instance with a rate independent of species concentration."""
+    """Specific Reaction instance with a rate independent of species concentration.
+
+    0 -> A
+    """
     def prop(self):
         return self.rate
         
@@ -54,8 +57,10 @@ class ConstInduction(Reaction):
         self.op[0].produce()
         
 class UniDeg(Reaction):
-    """Specific Reaction instance of degredation with a rate dependent on the
-    concentration of the species being degraded.
+    """Specific Reaction instance of degredation.
+    
+    A -> 0
+    The propensity is dependent on the concentration of the species being degraded.
     """
     def perform(self):
         #quick fix now, better fix later
@@ -111,9 +116,6 @@ class Network(object):
             #    self.reactions[0].perform()
             #else:
             #    self.reactions[1].perform()
-            
-            
-            #advance time and step
             t = t + tau
             n_steps += 1            
             #update species; there is definitely a better/faster way to do this
@@ -131,7 +133,7 @@ class Network(object):
                     break
             
             if n_steps % 100 == 0:
-                print "Number of steps = %d" % n_steps
+                print "Step: %d" % n_steps
             
         print "Simulation finished after %d steps" % n_steps     
         #f.close()
