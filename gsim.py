@@ -9,9 +9,10 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 class Species(object):
-    """A chemical species. Has an inherent property count."""
-    def __init__(self, count):
+    """A chemical species. Has the inherent properties name and count."""
+    def __init__(self, name, count):
         self.count = count
+        self.name = name
     
     def produce(self):
         self.count += 1
@@ -44,7 +45,7 @@ class Reaction(object):
         pass
         
 class ConstInduction(Reaction):
-    """Specific Reaction instance with a rate independent of species concentration"""
+    """Specific Reaction instance with a rate independent of species concentration."""
     def prop(self):
         return self.rate
         
@@ -63,7 +64,9 @@ class UniDeg(Reaction):
         
 class Network(object):
     """Holds a reaction network which can be acted on during the Gillespie
-    loop. Initializing a network requires a list of Species (with
+    loop.
+    
+    Initializing a network requires a list of Species (with
     associated inital counts) and a list of possible Reactions (with associated
     rates, inputs, outputs, etc.)
     Make sure to import numpy as np
@@ -76,8 +79,10 @@ class Network(object):
         pass
         
     def simulate(self, t_max, file_path):
-        """Still very exploratory/could be crashy. Make sure to double check
-        rate/times so that the simulation doesn't get out of control.
+        """Implementation of the Gillespie SSA.
+        
+        Make sure to double check rate/times so that the simulation doesn't
+        get out of control.
         Current implementation is specifically for two unimolecular creation/
         destruction reactions.
         """
@@ -88,10 +93,9 @@ class Network(object):
         #temporary data storage:
         data = []
         time = []
-        print self.species
+        print [i.name for i in self.species]
         while t < t_max:
-            #again, generalization
-            data.append(self.species[0].count)
+            data.append([i.count for i in self.species])
             time.append(t)
             r1, r2 = np.random.uniform(), np.random.uniform()
             alpha_vec = [i.prop() for i in self.reactions]
@@ -99,15 +103,34 @@ class Network(object):
             try:
                 tau = 1./alpha*np.log(1./r1)
             except ZeroDivisionError:
-                print "Propensity equal to zero at step = %d, time = %d" % (n_steps, t)
-            t = t + tau
-            n_steps += 1
+                print "Propensity equal to zero at step = %d, time = %d;\
+                Simulation terminated." % (n_steps, t)
+                break
             #update species here - could generalize much much more:
-            if r2 < 1./alpha:
-                self.reactions[0].perform()
-            else:
-                self.reactions[1].perform()
-            if n_steps % 10 == 0:
+            #if r2 < 1./alpha:
+            #    self.reactions[0].perform()
+            #else:
+            #    self.reactions[1].perform()
+            
+            
+            #advance time and step
+            t = t + tau
+            n_steps += 1            
+            #update species; there is definitely a better/faster way to do this
+            #also find a way to ensure that a reaction happens at every time step
+            z = 0
+            for i in range(len(alpha_vec)):
+                z += alpha_vec[i]
+                if float(z)/alpha == 1.0:
+                    self.reactions[i].perform()
+                    #print self.reactions[i].name
+                    break
+                elif r2 < float(z)/alpha:
+                    self.reactions[i].perform()
+                    #print self.reactions[i].name
+                    break
+            
+            if n_steps % 100 == 0:
                 print "Number of steps = %d" % n_steps
             
         print "Simulation finished after %d steps" % n_steps     
@@ -115,16 +138,26 @@ class Network(object):
         return time, data
         
 def main():
-    L = Species(0)
-    arrival = ConstInduction("Induction", None, [L], 1)
+    """Generate and simulate a model of lemmings approaching and jumping off
+    a cliff.
+    """
+    L = Species("Lemming", 0)
+    arrival = ConstInduction("Induction", None, [L], 1.0)
     jump = UniDeg("Degredation", [L], None, 0.1)
     cliff = Network([L], [arrival, jump])
-    x, y = cliff.simulate(100, "dummy_file")
-    #plots
+    x, y = cliff.simulate(200, "dummy_file")
+
+    print np.mean(y), np.mean(y)/np.var(y)
+    plt.subplot(121)
     plt.step(x, y)
+    plt.title("Lemmings vs. time")
     plt.xlabel("Time (s)")
     plt.ylabel("Number of Lemmings")
-    plt.show()  
+    plt.subplot(122)
+    plt.title("Lemming count distribution")
+    plt.hist([i[0] for i in y], normed=True)
+    plt.xlabel("Lemming population")
+    plt.show()
     
 if __name__ == "__main__":
     main()
