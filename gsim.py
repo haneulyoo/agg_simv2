@@ -1,8 +1,6 @@
 #!/usr/bin/python
 """
 Basic implementation of the Gillespie algorithm.
-
-Designed for unimolecular creation/destruction reactions
 """
 
 import numpy as np
@@ -27,6 +25,8 @@ class Reaction(object):
     (propensity); inputs include name of the reaction (str), input (list of
     species objects), output (list of species objects), rate (float), and
     potentially a description of the reaction (str).
+    The base class has no perform function! You must explicitly define the
+    reaction for each new reaction (for now?)
     """
     def __init__(self, name, ip, op, rate):
         self.name = name
@@ -35,13 +35,12 @@ class Reaction(object):
         self.op = op
         
     def prop(self):
-        alpha = 1
+        alpha = self.rate
         for i in self.ip:
             alpha *= i.count
-        return alpha*self.rate
+        return alpha
         
     def perform(self, ip, op, rate):
-        #insert specific reaction details here
         pass
         
 class ConstInduction(Reaction):
@@ -79,9 +78,6 @@ class Network(object):
     def __init__(self, sp_list, rxn_list):
         self.species = sp_list
         self.reactions = rxn_list
-        
-    def update_species(self, sp_list, rxn_list, alpha_vec, rn):
-        pass
         
     def simulate(self, t_max, file_path):
         """Implementation of the Gillespie SSA.
@@ -138,28 +134,3 @@ class Network(object):
         print "Simulation finished after %d steps" % n_steps     
         #f.close()
         return time, data
-        
-def main():
-    """Generate and simulate a model of lemmings approaching and jumping off
-    a cliff.
-    """
-    L = Species("Lemming", 0)
-    arrival = ConstInduction("Induction", None, [L], 1.0)
-    jump = UniDeg("Degredation", [L], None, 0.1)
-    cliff = Network([L], [arrival, jump])
-    x, y = cliff.simulate(200, "dummy_file")
-
-    print np.mean(y), np.mean(y)/np.var(y)
-    plt.subplot(121)
-    plt.step(x, y)
-    plt.title("Lemmings vs. time")
-    plt.xlabel("Time (s)")
-    plt.ylabel("Number of Lemmings")
-    plt.subplot(122)
-    plt.title("Lemming count distribution")
-    plt.hist([i[0] for i in y], normed=True)
-    plt.xlabel("Lemming population")
-    plt.show()
-    
-if __name__ == "__main__":
-    main()
