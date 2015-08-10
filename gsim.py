@@ -77,17 +77,18 @@ class Network(object):
         self.species = sp_list
         self.reactions = rxn_list
         
-    def simulate(self, t_max, filename):
+    def simulate(self, t_start, t_end, filename):
         """Implementation of the Gillespie SSA.
         
         No check on runtime. Make sure to double check rate/times so that
         simulation doesn't get out of control. filename should be a string.
         """
-        t = 0
+        assert t_start < t_end
+        t = t_start
         n_steps = 0
-        time = [[0]]
+        time = [[t]]
         data = [[i.count for i in self.species]]
-        while t <= t_max:
+        while t <= t_end:
             r1, r2 = np.random.uniform(), np.random.uniform()
             alpha_vec = [i.prop() for i in self.reactions]
             alpha = np.sum(alpha_vec)

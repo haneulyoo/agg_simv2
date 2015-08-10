@@ -25,11 +25,14 @@ class Inactivation(gsim.Reaction):
     #this could be recoded to change an internal state rather than introducing
     #a new species?
     def prop(self):
-        return self.rate * self.ip[0].count * np.sqrt(self.op[0].count)
+        if self.op[0].count == 0:
+            return self.rate*self.ip[0].count
+        else:
+            return self.rate * self.ip[0].count * np.sqrt(self.op[0].count)
     
-    def perform(self, ip, op):
+    def perform(self):
         self.ip[0].destroy()
-        self.op[0].create()
+        self.op[0].produce()
 
         
 class Temp_Dimerization(gsim.Reaction):
@@ -49,9 +52,9 @@ class Temp_Dimerization(gsim.Reaction):
         self.temp = T
         
     def prop(self):
-        return self.count*(self.count-1)*self.rate*T
+        return self.ip[0].count*(self.ip[0].count-1)*self.rate*self.temp
     
-    def perform(self, ip, op, rate):
+    def perform(self):
         self.ip[0].destroy()
         self.ip[0].destroy()
         self.op[0].produce()
@@ -63,8 +66,32 @@ def main():
     AA = gsim.Species("AA", 0)
     iAA = gsim.Species("iAA", 0)
     # Possible reactions
-    nuc = Temp_Dimerization("Nucleation", [A], [AA], 0.1)
-    inactivation = Inactivation("Inactivation", [AA], [iAA], 1.0)
-    # System Loop
+    inactivation = Inactivation("Inactivation", [AA], [iAA], 0.005)
+    nuc = Temp_Dimerization("Nucleation", [A], [AA], 0.00001, 300)
     system = gsim.Network([A, AA, iAA], [nuc, inactivation])
-    x, y = system.simulate()
+    x = system.simulate(0, 50, "None")
+    
+    nuc = Temp_Dimerization("Nucleation", [A], [AA], 0.00001, 320)
+    y = system.simulate(x[-1,0], 100, "None")
+    
+    final = np.vstack((x, y))
+    print final, final.shape
+    #temp_course = [320, 300]
+    #t_add = 50
+    #for T in range(len(temp_course)):
+    #    t_total = 50
+    #    nuc = Temp_Dimerization("Nucleation", [A], [AA], 0.0001, temp_course[T])
+    #    system = gsim.Network([A, AA, iAA], [nuc, inactivation])
+    #    x2 = system.simulate(t_total, t_total + t_add, "None")
+    #    np.hstack(x1, x2)
+    #    t_total += t_add
+    
+    #print x
+    
+    fig, axis = plt.subplots()    
+    for i in range(1,4):
+        axis.step(final[:,0], final[:,i])
+    plt.show()
+
+if __name__ == "__main__":
+    main()
