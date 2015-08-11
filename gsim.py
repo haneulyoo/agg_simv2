@@ -117,7 +117,7 @@ class Network(object):
                     break
             time.append([t]) 
             data.append([i.count for i in self.species])
-            if n_steps % 100 == 0:
+            if n_steps % 500 == 0:
                 print "Step: %d" % n_steps
         
         print "Simulation finished after %d steps" % n_steps

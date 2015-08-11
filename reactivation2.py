@@ -1,15 +1,13 @@
-#!/usr/bin/python
-'''
-Simulates reactivation of deactivated species in a temperature dependent fashion.
-'''
 # -*- coding: utf-8 -*-
+"""
+Modeling only inactivation and reactivation - no dimerization step
+"""
 
 import numpy as np
 import matplotlib.pyplot as plt
 from gsim import Reaction, Species, Network, UniDeg
-from inactivation_sim import Temp_Dimerization
 
-class Reactivation(Reaction):
+class MonomerReactivation(Reaction):
     """A reaction which converts a single inactivated species to two active.
     
     iAA + C -> A + A + C
@@ -19,7 +17,6 @@ class Reactivation(Reaction):
     """
     def perform(self):
         self.ip[0].destroy()
-        self.op[0].produce()
         self.op[0].produce()
         
 class HeatInducedProduction(Reaction):
@@ -63,12 +60,11 @@ class HeatInducedInactivation(Reaction):
         if self.op[0].count == 0:
             return self.rate*self.ip[0].count
         else:
-            return self.rate*self.ip[0].count*np.sqrt(self.op[0].count)*self.temp
+            return self.rate*self.ip[0].count*self.temp#*np.sqrt(self.op[0].count)
     
     def perform(self):
         self.ip[0].destroy()
         self.op[0].produce()
-        
         
 def main():
     """Simulate temperature dependent aggregation and disaggregation.
@@ -79,46 +75,41 @@ def main():
     # Rates
     k1 = 0.01 #disaggregation rate
     k2 = 0.1 #chaperone degradation rate
-    k3 = 0.00001 #dimerization rate
-    k4 = 0.001 #heat induced chaperone production rate
+    k4 = 0.1 #heat induced chaperone production rate
     k5 = 0.01 #heat inactivation rate of assembler
-    T1 = 200
-    T2 = 220
+    T1 = 1
+    T2 = 50
     # Species
     A = Species("A", 100)
-    AA = Species("AA", 0)
-    iAA = Species("iAA", 0)
-    C = Species("C", 10)
+    iA = Species("iA", 0)
+    C = Species("C", 20)
     # Temperature independent reactions
-    disagg = Reactivation("Disagg", [iAA, C], [A, C], k1)
+    disagg = MonomerReactivation("Disagg", [iA, C], [A, C], k1)
     deg = UniDeg("C Degredation", [C], [None], k2)
     # Simulation and Temperature-Dependent Reaction
-    # Temperature ramp = 300, 320, 300
-    nuc = Temp_Dimerization("Nucleation", [A], [AA], k3, T1)
-    hip = HeatInducedProduction("Heat Induced Production", [iAA], [C], k4, T1)
-    inactivation = HeatInducedInactivation("Inactivation", [AA], [iAA], k5, T1)
-    sp_list = [A, AA, iAA, C]
-    rxn_list= [nuc, inactivation, disagg, hip, deg]
+    hip = HeatInducedProduction("Heat Induced Production", [iA], [C], k4, T1)
+    inactivation = HeatInducedInactivation("Inactivation", [A], [iA], k5, T1)
+    sp_list = [A, iA, C]
+    rxn_list= [inactivation, disagg, hip, deg]
     system = Network(sp_list, rxn_list)
-    x = system.simulate(0, 20, "None")
-    #nuc = Temp_Dimerization("Nucleation", [A], [AA], k3, 30)
-    #hip = HeatInducedProduction("Heat Induced Production", [iAA], [C], k4, T2)
-    #inactivation = HeatInducedInactivation("Inactivation", [AA], [iAA], k5, T2)
-    #y = system.simulate(x[-1,0], 50, "None")
-    #nuc = Temp_Dimerization("Nucleation", [A], [AA], k3, 10)
-    #hip = HeatInducedProduction("Heat Induced Production", [iAA], [C], k4, T1)
-    #inactivation = HeatInducedInactivation("Inactivation", [AA], [iAA], k5, T1)
+    x = system.simulate(0, 50, "None")
+    hip = HeatInducedProduction("Heat Induced Production", [iA], [C], k4, T2)
+    inactivation = HeatInducedInactivation("Inactivation", [A], [iA], k5, T2)
+    y = system.simulate(x[-1,0], 100, "None")
+    #hip = HeatInducedProduction("Heat Induced Production", [iA], [C], k4, T1)
+    #inactivation = HeatInducedInactivation("Inactivation", [A], [iA], k5, T1)
     #z = system.simulate(y[-1,0], 70, "None")
     
+    final = np.vstack((x,y))
     #final = np.vstack((x, y, z))
     #x2 = [i[-1,0] for i in [x, y, z]]
     #y2 = [T1, T2, T1]
    
     fig, axis = plt.subplots(figsize=(10,10)) 
     for i in range(1,len(sp_list)+1):
-        axis.step(x[:,0], x[:,i], label=sp_list[i-1].name)
+        axis.step(final[:,0], final[:,i], label=sp_list[i-1].name)
     plt.legend(loc=0)
-    plt.xlim(0,x[-1,0])
+    plt.xlim(0,final[-1,0])
     plt.xlabel("Time")
     plt.ylabel("Molecular species count")
     #axis2 = axis.twinx()
