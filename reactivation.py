@@ -86,21 +86,21 @@ def main():
     deg = UniDeg("C Degredation", [C], [None], 0.1)
     # Simulation and Temperature-Dependent Reaction
     # Temperature ramp = 300, 320, 300
-    nuc = Temp_Dimerization("Nucleation", [A], [AA], 0.0001, 300)
-    hip = HeatInducedProduction("Heat Induced Production", [iAA], [C], 0.001, 300)
-    inactivation = HeatInducedInactivation("Inactivation", [AA], [iAA], 0.01, 10)
+    nuc = Temp_Dimerization("Nucleation", [A], [AA], 0.0001, 10)
+    hip = HeatInducedProduction("Heat Induced Production", [iAA], [C], 0.1, 300)
+    inactivation = HeatInducedInactivation("Inactivation", [AA], [iAA], 0.001, 10)
     sp_list = [A, AA, iAA, C]
     rxn_list= [nuc, inactivation, disagg, hip, deg]
     system = Network(sp_list, rxn_list)
     x = system.simulate(0, 20, "None")
-    nuc = Temp_Dimerization("Nucleation", [A], [AA], 0.0001, 320)
-    hip = HeatInducedProduction("Heat Induced Production", [iAA], [C], 0.001, 320)
-    inactivation = HeatInducedInactivation("Inactivation", [AA], [iAA], 0.01, 30)
+    nuc = Temp_Dimerization("Nucleation", [A], [AA], 0.0001, 30)
+    hip = HeatInducedProduction("Heat Induced Production", [iAA], [C], 0.1, 320)
+    inactivation = HeatInducedInactivation("Inactivation", [AA], [iAA], 0.001, 30)
     y = system.simulate(x[-1,0], 50, "None")
-    nuc = Temp_Dimerization("Nucleation", [A], [AA], 0.0001, 300)
-    hip = HeatInducedProduction("Heat Induced Production", [iAA], [C], 0.001, 300)
-    inactivation = HeatInducedInactivation("Inactivation", [AA], [iAA], 0.01, 10)
-    z = system.simulate(y[-1,0], 100, "None")
+    nuc = Temp_Dimerization("Nucleation", [A], [AA], 0.0001, 10)
+    hip = HeatInducedProduction("Heat Induced Production", [iAA], [C], 0.1, 300)
+    inactivation = HeatInducedInactivation("Inactivation", [AA], [iAA], 0.001, 10)
+    z = system.simulate(y[-1,0], 70, "None")
     
     final = np.vstack((x, y, z))
     
