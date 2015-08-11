@@ -61,32 +61,21 @@ class Temp_Dimerization(gsim.Reaction):
         
         
 def main():
-    # Species in the system
+    # Species
     A = gsim.Species("A", 100)
     AA = gsim.Species("AA", 0)
     iAA = gsim.Species("iAA", 0)
-    # Possible reactions
+    # Temperature independent reactions
     inactivation = Inactivation("Inactivation", [AA], [iAA], 0.005)
     nuc = Temp_Dimerization("Nucleation", [A], [AA], 0.00001, 300)
+    # Simulation and temperature-dependent reactions
     system = gsim.Network([A, AA, iAA], [nuc, inactivation])
     x = system.simulate(0, 50, "None")
-    
     nuc = Temp_Dimerization("Nucleation", [A], [AA], 0.00001, 320)
     y = system.simulate(x[-1,0], 100, "None")
     
     final = np.vstack((x, y))
     print final, final.shape
-    #temp_course = [320, 300]
-    #t_add = 50
-    #for T in range(len(temp_course)):
-    #    t_total = 50
-    #    nuc = Temp_Dimerization("Nucleation", [A], [AA], 0.0001, temp_course[T])
-    #    system = gsim.Network([A, AA, iAA], [nuc, inactivation])
-    #    x2 = system.simulate(t_total, t_total + t_add, "None")
-    #    np.hstack(x1, x2)
-    #    t_total += t_add
-    
-    #print x
     
     fig, axis = plt.subplots()    
     for i in range(1,4):

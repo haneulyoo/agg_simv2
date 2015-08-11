@@ -40,8 +40,8 @@ class Reaction(object):
             alpha *= i.count
         return alpha
         
-    def perform(self, ip, op, rate):
-        pass
+#    def perform(self):
+#        pass
         
 class ConstInduction(Reaction):
     """Specific Reaction instance with a rate independent of species concentration.
