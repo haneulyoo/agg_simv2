@@ -10,10 +10,10 @@ from gsim import Reaction, Species, Network, UniDeg
 class MonomerReactivation(Reaction):
     """A reaction which converts a single inactivated species to two active.
     
-    iAA + C -> A + A + C
+    iA + C -> A + C
     In this particular instance disaggregation and reactivation are coupled.
     !!!For now -> the order of Species in the input/output list should be
-    [inactivated, preserved] ([iAA/A, C] in the above reaaction.
+    [inactivated, preserved] ([iA/A, C] in the above reaaction.
     """
     def perform(self):
         self.ip[0].destroy()
@@ -76,40 +76,41 @@ def main():
     k1 = 0.01 #disaggregation rate
     k2 = 0.1 #chaperone degradation rate
     k4 = 0.1 #heat induced chaperone production rate
-    k5 = 0.01 #heat inactivation rate of assembler
+    k5 = 0.05 #heat inactivation rate of assembler
     T1 = 1
-    T2 = 50
+    T2 = 0
+    T3 = 20
     # Species
     A = Species("A", 100)
     iA = Species("iA", 0)
-    C = Species("C", 20)
+    C = Species("C", 10)
     # Temperature independent reactions
     disagg = MonomerReactivation("Disagg", [iA, C], [A, C], k1)
     deg = UniDeg("C Degredation", [C], [None], k2)
     # Simulation and Temperature-Dependent Reaction
     hip = HeatInducedProduction("Heat Induced Production", [iA], [C], k4, T1)
-    inactivation = HeatInducedInactivation("Inactivation", [A], [iA], k5, T1)
+    inactivation = HeatInducedInactivation("Inactivation", [A], [iA], k5, T2)
     sp_list = [A, iA, C]
     rxn_list= [inactivation, disagg, hip, deg]
     system = Network(sp_list, rxn_list)
-    x = system.simulate(0, 50, "None")
-    hip = HeatInducedProduction("Heat Induced Production", [iA], [C], k4, T2)
-    inactivation = HeatInducedInactivation("Inactivation", [A], [iA], k5, T2)
-    y = system.simulate(x[-1,0], 100, "None")
+    x = system.simulate(0, 100, "None")
+    hip = HeatInducedProduction("Heat Induced Production", [iA], [C], k4, T3)
+    inactivation = HeatInducedInactivation("Inactivation", [A], [iA], k5, T3)
+    y = system.simulate(x[-1,0], 400, "None")
     #hip = HeatInducedProduction("Heat Induced Production", [iA], [C], k4, T1)
     #inactivation = HeatInducedInactivation("Inactivation", [A], [iA], k5, T1)
     #z = system.simulate(y[-1,0], 70, "None")
     
-    final = np.vstack((x,y))
+    #final = np.vstack((x,y))
     #final = np.vstack((x, y, z))
     #x2 = [i[-1,0] for i in [x, y, z]]
     #y2 = [T1, T2, T1]
    
-    fig, axis = plt.subplots(figsize=(10,10)) 
+    fig, axis = plt.subplots(figsize=(7,7)) 
     for i in range(1,len(sp_list)+1):
-        axis.step(final[:,0], final[:,i], label=sp_list[i-1].name)
+        axis.step(x[:,0], x[:,i], label=sp_list[i-1].name)
     plt.legend(loc=0)
-    plt.xlim(0,final[-1,0])
+    plt.xlim(0,x[-1,0])
     plt.xlabel("Time")
     plt.ylabel("Molecular species count")
     #axis2 = axis.twinx()
@@ -117,7 +118,7 @@ def main():
     #plt.ylim(T1,T2)
     #plt.fill_between([x2[0], x2[1]], [220,220], alpha=0.5, color='darkgray')
     #plt.ylabel("Temperature (T)")
-    #plt.savefig("reactivation_plot.pdf")
+    #plt.savefig("reactivation_p2.pdf")
     plt.show()
     
 if __name__ == "__main__":
