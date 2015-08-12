@@ -60,7 +60,7 @@ class HeatInducedInactivation(Reaction):
         if self.op[0].count == 0:
             return self.rate*self.ip[0].count
         else:
-            return self.rate*self.ip[0].count*self.temp#*np.sqrt(self.op[0].count)
+            return self.rate*self.ip[0].count*self.temp*np.sqrt(self.op[0].count)
     
     def perform(self):
         self.ip[0].destroy()
@@ -74,9 +74,9 @@ def main():
     """
     # Rates
     k1 = 0.01 #disaggregation rate
-    k2 = 0.1 #chaperone degradation rate
-    k4 = 0.1 #heat induced chaperone production rate
-    k5 = 0.05 #heat inactivation rate of assembler
+    k2 = 0.01 #chaperone degradation rate
+    k4 = 0.01 #heat induced chaperone production rate
+    k5 = 0.01 #heat inactivation rate of assembler
     T1 = 1
     T2 = 0
     T3 = 20
@@ -88,15 +88,15 @@ def main():
     disagg = MonomerReactivation("Disagg", [iA, C], [A, C], k1)
     deg = UniDeg("C Degredation", [C], [None], k2)
     # Simulation and Temperature-Dependent Reaction
-    hip = HeatInducedProduction("Heat Induced Production", [iA], [C], k4, T1)
-    inactivation = HeatInducedInactivation("Inactivation", [A], [iA], k5, T2)
+    hip = HeatInducedProduction("Heat Induced Production", [iA], [C], k4, T3)
+    inactivation = HeatInducedInactivation("Inactivation", [A], [iA], k5, T3)
     sp_list = [A, iA, C]
     rxn_list= [inactivation, disagg, hip, deg]
     system = Network(sp_list, rxn_list)
-    x = system.simulate(0, 100, "None")
-    hip = HeatInducedProduction("Heat Induced Production", [iA], [C], k4, T3)
-    inactivation = HeatInducedInactivation("Inactivation", [A], [iA], k5, T3)
-    y = system.simulate(x[-1,0], 400, "None")
+    x = system.simulate(0, 70, "None")
+    #hip = HeatInducedProduction("Heat Induced Production", [iA], [C], k4, T3)
+    #inactivation = HeatInducedInactivation("Inactivation", [A], [iA], k5, T3)
+    #y = system.simulate(x[-1,0], 400, "None")
     #hip = HeatInducedProduction("Heat Induced Production", [iA], [C], k4, T1)
     #inactivation = HeatInducedInactivation("Inactivation", [A], [iA], k5, T1)
     #z = system.simulate(y[-1,0], 70, "None")
@@ -105,10 +105,10 @@ def main():
     #final = np.vstack((x, y, z))
     #x2 = [i[-1,0] for i in [x, y, z]]
     #y2 = [T1, T2, T1]
-   
+    colors = ['b','r','c']
     fig, axis = plt.subplots(figsize=(7,7)) 
     for i in range(1,len(sp_list)+1):
-        axis.step(x[:,0], x[:,i], label=sp_list[i-1].name)
+        axis.step(x[:,0], x[:,i], label=sp_list[i-1].name, c=colors[i-1])
     plt.legend(loc=0)
     plt.xlim(0,x[-1,0])
     plt.xlabel("Time")
@@ -118,7 +118,7 @@ def main():
     #plt.ylim(T1,T2)
     #plt.fill_between([x2[0], x2[1]], [220,220], alpha=0.5, color='darkgray')
     #plt.ylabel("Temperature (T)")
-    #plt.savefig("reactivation_p2.pdf")
+    plt.savefig("reactivation_p1(wsqrt).pdf")
     plt.show()
     
 if __name__ == "__main__":

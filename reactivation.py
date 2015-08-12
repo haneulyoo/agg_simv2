@@ -80,7 +80,7 @@ def main():
     k1 = 0.01 #disaggregation rate
     k2 = 0.1 #chaperone degradation rate
     k3 = 0.00001 #dimerization rate
-    k4 = 0.001 #heat induced chaperone production rate
+    k4 = 0.01 #heat induced chaperone production rate
     k5 = 0.01 #heat inactivation rate of assembler
     T1 = 200
     T2 = 220
