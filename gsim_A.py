@@ -58,7 +58,7 @@ class TDReaction(Reaction):
                 alpha *= i.count
                 return alpha
         else:
-            alpha = self.baserate*np.exp(-self.Ea/(1.381e-23*self.T-298)) #Kb in units of J/K; base temperature assumed to be 298 K
+            alpha = self.baserate*np.exp(-self.Ea/(1.381e-23*(T-298))) #Kb in units of J/K; base temperature assumed to be 298 K
             for i in self.ip:
                 alpha *= i.count
                 return alpha
@@ -80,7 +80,10 @@ class TConstInduction(TDReaction):
         if T == 298:
             return self.baserate
         else:
-            return self.baserate*np.exp(-self.Ea/(1.381e-23*T-298))
+            return self.baserate*np.exp(-self.Ea/(1.381e-23*(T-298)))
+    
+    #def prop(self, T):
+    #    return self.baserate*T
     
     def perform(self):
         self.op[0].produce()
