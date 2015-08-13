@@ -21,16 +21,19 @@ def main():
     y1, y2 = x[:50,2], x[50:,2]
     print "Mean1: %f, Mean1/Var1: %f" % (np.mean(y1), np.mean(y1)/np.var(y1))
     print "Mean2: %f, Mean2/Var2: %f" % (np.mean(y2), np.mean(y2)/np.var(y2))
-    fig = plt.figure(figsize=(5, 5))
-    gs = gridspec.GridSpec(2, 1, height_ratios=(2,1))
-    #axis = plt.subplots(2, sharex=True, figsize=(5,5))
-    axis[1].step(x[:,0], y)
-    #axis[1].set_title("Lemmings vs. time")
-    axis[1].set_ylabel("Lemmings")
+    
+    #plotting function -> plots temperature over timecourse w/ shared x axis    
+    fig = plt.figure(figsize=(8, 8))
+    gs = gridspec.GridSpec(2, 1, height_ratios=(1,3))
+    axis1 = plt.subplot(gs[1])
+    axis1.step(x[:,0], y)
     plt.xlabel("Time (s)")
-    axis[0].step(x[:,0],x[:,1], label='Time')
-    axis[0].set_ylabel("Temperature")
-    #plt.tight_layout()
+    axis1.set_ylabel("Lemmings")
+    axis0 = plt.subplot(gs[0], sharex=axis1)
+    axis0.step(x[:,0],x[:,1])
+    axis0.set_ylabel("Temperature")
+    plt.setp(axis0.get_xticklabels(), visible=False)
+    plt.tight_layout()
     plt.show()
     
 if __name__ == "__main__":
