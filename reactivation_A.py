@@ -5,7 +5,7 @@ Modeling only inactivation and reactivation - no dimerization step
 
 import numpy as np
 import matplotlib.pyplot as plt
-from gsim import Reaction, Species, Network, UniDeg
+from gsim_A import Reaction, TDReaction, TConstInduction, Species, Network, UniDeg
 
 class MonomerReactivation(Reaction):
     """A reaction which converts a single inactivated species to two active.

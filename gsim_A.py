@@ -52,16 +52,10 @@ class TDReaction(Reaction):
     Currently implementation uses the Arrehenius equation to determine the rate
     """
     def prop(self, T):
-        if T == 298:
-            alpha = self.baserate
-            for i in self.ip:
-                alpha *= i.count
-                return alpha
-        else:
-            alpha = self.baserate*np.exp(-self.Ea/(1.381e-23*(T-298))) #Kb in units of J/K; base temperature assumed to be 298 K
-            for i in self.ip:
-                alpha *= i.count
-                return alpha
+        alpha = self.baserate*np.exp(-self.Ea/1.381e-23*(1-(298/T))) #Kb in units of J/K; base temperature assumed to be 298 K
+        for i in self.ip:
+            alpha *= i.count
+            return alpha
         
 class ConstInduction(Reaction):
     """Production from nothing.
@@ -77,10 +71,7 @@ class ConstInduction(Reaction):
 class TConstInduction(TDReaction):
     """Production from nothing at a temperature dependent rate."""
     def prop(self, T):
-        if T == 298:
-            return self.baserate
-        else:
-            return self.baserate*np.exp(-self.Ea/(1.381e-23*(T-298)))
+        return self.baserate*np.exp(-self.Ea/1.381e-23*(1-(298/T)))
     
     #def prop(self, T):
     #    return self.baserate*T
@@ -157,7 +148,7 @@ class Network(object):
                 Simulation terminated." % (n_steps, t)
                 break
 
-            t = t + tau
+            t += tau
             n_steps += 1
             #update species; there is definitely a better/faster way to do this
             #also find a way to ensure that a reaction happens at every time step
