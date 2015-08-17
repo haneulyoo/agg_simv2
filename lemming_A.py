@@ -16,9 +16,10 @@ def main():
     L = Species("Lemming", 0)
     arrival = TConstInduction("Induction", None, [L], -1e-22, 0.1)
     jump = UniDeg("Degredation", [L], None, -1e-22, 0.1)
-    #temp_fxn = [(100,350), (150,298)]
-    temp_fxn = [(1,298)]
+    temp_fxn = [(100,350), (150,298)]
+    #temp_fxn = [(1,298)]
     cliff = Network([L], [arrival, jump])
+    # Simulate and parse data    
     x = cliff.simulate(0, 200, temp_fxn, "dummy_file2.dat")
     y = x[:,2]    
     y1 = [x[i,2] for i in range(len(x)) if x[i,0] > 50 and x[i,0] < 100]
@@ -31,6 +32,7 @@ def main():
     #print "Mean3: %f, Mean3/Var3: %f" % (np.mean(y3), np.mean(y3)/np.var(y3))
     #plotting function -> plots temperature over timecourse w/ shared x axis    
     
+    # Generate plots
     fig = plt.figure(figsize=(8, 8))
     gs = gridspec.GridSpec(2, 1, height_ratios=(1,3))
     axis1 = plt.subplot(gs[1])

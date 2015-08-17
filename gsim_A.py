@@ -70,11 +70,11 @@ class ConstInduction(Reaction):
         
 class TConstInduction(TDReaction):
     """Production from nothing at a temperature dependent rate."""
-    def prop(self, T):
-        return self.baserate*np.exp(-self.Ea/1.381e-23*(1-(298/T)))
-    
     #def prop(self, T):
-    #    return self.baserate*T
+    #    return self.baserate*np.exp(-self.Ea/1.381e-23*(1-(298/T)))
+    
+    def prop(self, T):
+        return self.baserate*T
     
     def perform(self):
         self.op[0].produce()
