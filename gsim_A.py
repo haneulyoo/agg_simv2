@@ -52,10 +52,16 @@ class TDReaction(Reaction):
     Currently implementation uses the Arrehenius equation to determine the rate
     """
     def prop(self, T):
-        alpha = self.baserate*np.exp(-self.Ea/1.381e-23*(1-(298/T))) #Kb in units of J/K; base temperature assumed to be 298 K
+        alpha = self.baserate*T
         for i in self.ip:
             alpha *= i.count
             return alpha
+            
+#    def prop(self, T):
+#        alpha = self.baserate*np.exp(-self.Ea/1.381e-23*(1-(298/T))) #Kb in units of J/K; base temperature assumed to be 298 K
+#        for i in self.ip:
+#            alpha *= i.count
+#            return alpha
         
 class ConstInduction(Reaction):
     """Production from nothing.

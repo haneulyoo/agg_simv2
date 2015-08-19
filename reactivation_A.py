@@ -5,15 +5,15 @@ Modeling only inactivation and reactivation - no dimerization step
 
 import numpy as np
 import matplotlib.pyplot as plt
-from gsim_A import Reaction, Species, Network, UniDeg
+from gsim_A import Reaction, Species, Network, UniDeg, TDReaction
 
-class MonomerReactivation(Reaction):
+class MonomerReactivation(TDReaction):
     """A reaction which converts a single inactivated species to two active.
     
     iAA + C -> A + A + C
     In this particular instance disaggregation and reactivation are coupled.
     !!!For now -> the order of Species in the input/output list should be
-    [inactivated, preserved] ([iA/A, C] in the above reaaction.
+    [inactivated, preserved] ([iAA/AA, C] in the above reaaction.
     """
     def perform(self):
         self.ip[0].destroy()
@@ -28,7 +28,7 @@ class HeatInducedProduction(Reaction):
     simulation. Include this parameter in the ip list.
     """
     def prop(self, T):
-        return self.baserate*T*self.ip[0].count
+        return self.baserate*self.ip[0].count*T
         
     def perform(self):
         self.op[0].produce()
@@ -48,7 +48,7 @@ class HeatInducedInactivation(Reaction):
         if self.op[0].count == 0:
             return self.baserate*self.ip[0].count
         else:
-            return self.baserate*self.ip[0].count*T*0.09*np.sqrt(self.op[0].count)
+            return self.baserate*self.ip[0].count*np.sqrt(self.op[0].count)*T#*0.8
     
     def perform(self):
         self.ip[0].destroy()
@@ -63,7 +63,7 @@ class Temp_Dimerization(Reaction):
     output should be a list of a single dimerized species).
     """        
     def prop(self, T):
-        return self.ip[0].count*(self.ip[0].count-1)*0.09*self.baserate*T
+        return self.ip[0].count*(self.ip[0].count-1)*self.baserate*T#*0.8
     
     def perform(self):
         self.ip[0].destroy()
@@ -76,11 +76,12 @@ def main():
     """Simulate temperature dependent aggregation and disaggregation."""
     # Rates and Temperatures
     k1 = 0.01 #disaggregation rate
-    k2 = 0.5 #chaperone degradation rate
-    k3 = 0.00001 #dimerization rate
-    k4 = 0.01 #heat induced chaperone production rate
+    k2 = 0.1 #chaperone degradation rate
+    k3 = 0.0001 #dimerization rate
+    k4 = 0.05 #heat induced chaperone production rate
     k5 = 0.001 #heat inactivation rate of assembler
-    temp_fxn = [(1,298)]
+    #temp_fxn = [(20,315), (80,298)]
+    temp_fxn = [(1,298)]    
     # Species
     A = Species("A", 100)
     AA = Species("AA", 0)
@@ -96,7 +97,7 @@ def main():
     sp_list = [A, AA, iAA, C]
     rxn_list= [inactivation, disagg, hip, deg, nuc]
     system = Network(sp_list, rxn_list)
-    x = system.simulate(0, 100, temp_fxn, "None")
+    x = system.simulate(0, 70, temp_fxn, "None")
     
     #x2 = [i[-1,0] for i in [x, y, z]]
     #y2 = [T1, T2, T1]
@@ -108,6 +109,7 @@ def main():
     plt.xlim(0,x[-1,0])
     plt.xlabel("Time")
     plt.ylabel("Molecular species count")
+    #plt.ylim(0,500)
     #axis2 = axis.twinx()
     #axis2.step(x2,y2, c='darkgray')
     #plt.ylim(T1,T2)
@@ -115,6 +117,23 @@ def main():
     #plt.ylabel("Temperature (T)")
     #plt.savefig("reactivation_p1(wsqrt).pdf")
     plt.show()
+    print np.mean(x[:,1])
     
 if __name__ == "__main__":
     main()
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

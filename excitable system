@@ -1,0 +1,3 @@
+excitable system
+
+The system only experiences 'noisy' or excitable behavior when the aggregation step is temperature independent (i.e. ~300 slower than all other rates) when there are no aggregated species around, and is temperature dependent when an initial reaction occurs. This in fact may be a mimic of nucleation behavior, where a very rare inital event leads to a cascade of future events.
