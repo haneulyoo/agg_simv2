@@ -173,8 +173,8 @@ class Network(object):
             time.append([t]) 
             data.append([i.count for i in self.species])
             temp.append([T])
-            if n_steps % 500 == 0:
-                print "Step: %d" % n_steps
+            #if n_steps % 500 == 0:
+            #    print "Step: %d" % n_steps
         
         print "Simulation finished after %d steps" % n_steps
         data = np.asarray(data)

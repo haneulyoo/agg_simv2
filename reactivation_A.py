@@ -46,7 +46,7 @@ class HeatInducedInactivation(Reaction):
     """
     def prop(self, T):
         if self.op[0].count == 0:
-            return self.baserate*self.ip[0].count
+            return self.baserate*self.ip[0].count#*T
         else:
             return self.baserate*self.ip[0].count*np.sqrt(self.op[0].count)*T#*0.8
     
@@ -63,7 +63,7 @@ class Temp_Dimerization(Reaction):
     output should be a list of a single dimerized species).
     """        
     def prop(self, T):
-        return self.ip[0].count*(self.ip[0].count-1)*self.baserate*T#*0.8
+        return self.ip[0].count*(self.ip[0].count-1)*self.baserate#*T#*0.8
     
     def perform(self):
         self.ip[0].destroy()
@@ -118,7 +118,7 @@ def main():
     #plt.savefig("reactivation_p1(wsqrt).pdf")
     plt.show()
     print np.mean(x[:,1])
-    
+
 if __name__ == "__main__":
     main()
 
