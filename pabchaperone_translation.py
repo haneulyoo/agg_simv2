@@ -67,7 +67,7 @@ def main():
     k2 = .01 # Reactivation
     k3 = .01 # Protein synthesis
     k4 = .01 # Protein degradation    
-    temp_fxn = [(1,0)]
+    temp_fxn = [(0,298)]
     # Species
     Pab1 = Species("Pab1", 100)
     C = Species("Chaperone", 0)
@@ -82,16 +82,19 @@ def main():
     rxn_list = [aggregation, disaggregation, Ctranslation, Cdeg]
     system = Network(species_list, rxn_list)
     # Simulation
-    x = system.simulate(0, 100, temp_fxn, None)
+    x = system.simulate(0, 1000, temp_fxn, None)
     # Plots
     colors = ['royalblue', 'gold', 'firebrick']
-    fig, axis = plt.subplots(figsize=(7,7))
+    fig, (axis2, axis) = plt.subplots(2, 1, figsize=(7,7))
     for i in range(2,len(species_list)+2):
-        axis.step(x[:,0], x[:,i], label=species_list[i-2].name, c=colors[i-2], linewidth=2)
-    plt.legend(loc=0)
-    plt.xlim(0,x[-1,0])
-    plt.xlabel("Time")
-    plt.ylabel("Molecular species count")
+        axis.plot(x[:100,0], x[:100,i], label=species_list[i-2].name, c=colors[i-2], linewidth=3)
+    axis.legend(loc=0)
+    axis.set_xlim(0,1)#x[-1,0])
+    axis.set_xlabel("Time")
+    axis.set_ylabel("Molecular species count")
+    axis2.step(x[:, 0], x[:, 1], linewidth=3)
+    axis2.set_xlabel("Time (s)")
+    axis2.set_ylabel("Temperature")
     plt.tight_layout()
     plt.show()
 

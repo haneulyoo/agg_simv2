@@ -56,7 +56,7 @@ class TDReaction(Reaction):
         alpha = self.baserate*T
         for i in self.ip:
             alpha *= i.count
-            return alpha
+        return alpha
             
 #    def prop(self, T):
 #        alpha = self.baserate*np.exp(-self.Ea/1.381e-23*(1-(298/T))) #Kb in units of J/K; base temperature assumed to be 298 K
@@ -115,16 +115,17 @@ class Network(object):
         
         temp_fxn should be formatted as a list of tuples of the form
         (time, temperature) for all desired changes in temperature.
-        Default T is 298 K.
+        Default T is the first temperature entered.
         """
         if t < temp_fxn[0][0]:
-            return 298
+            return temp_fxn[0][1]
         elif t > temp_fxn[len(temp_fxn)-1][0]:
             return temp_fxn[len(temp_fxn)-1][1]
         else:
             for i in range(1,len(temp_fxn)):
                 if t < temp_fxn[i][0]:
                     return temp_fxn[i-1][1]
+            return temp_fxn[0][1]
         
         
     def simulate(self, t_start, t_end, temp_fxn, filename):
@@ -142,7 +143,7 @@ class Network(object):
         n_steps = 0
         time = [[t]]
         data = [[i.count for i in self.species]]
-        temp = [[298]]
+        temp = [[self.determine_temperature(temp_fxn, t)]]
         while t <= t_end:
             T = self.determine_temperature(temp_fxn, t)
             r1, r2 = np.random.uniform(), np.random.uniform()
