@@ -52,6 +52,7 @@ class TDReaction(Reaction):
     Currently implementation uses the Arrehenius equation to determine the rate
     """
     def prop(self, T):
+        """Return the propensity using T."""
         alpha = self.baserate*T
         for i in self.ip:
             alpha *= i.count
