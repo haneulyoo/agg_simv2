@@ -47,10 +47,7 @@ class Reaction(object):
         pass
     
 class TDReaction(Reaction):
-    """Defines the base class for a temperature dependent reaction.
-    
-    Currently implementation uses the Arrehenius equation to determine the rate
-    """
+    """Defines the base class for a temperature dependent reaction."""
     def prop(self, T):
         """Return the propensity using T."""
         alpha = self.baserate*T

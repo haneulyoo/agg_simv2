@@ -40,11 +40,7 @@ class CProduction(Reaction):
     reaction.
     """
     def prop(self, T):
-        try:            
-            x = self.baserate*(1. / self.ip[0].count)
-        except ZeroDivisionError:
-            x = self.baserate
-        return x
+        return self.baserate*self.ip[0].count
         
     def perform(self):
         self.op[0].produce()
@@ -60,14 +56,14 @@ class CProduction(Reaction):
 #        self.ip[0].destroy()
         
         
-        
 def main():
     # Rates
-    k1 = .01 # Deactivation
-    k2 = .01 # Reactivation
+    k1 = .1 # Deactivation
+    k2 = .1 # Reactivation
     k3 = 1 # Protein synthesis
-    k4 = .01 # Protein degradation    
-    temp_fxn = [(0,100)]
+    k4 = .1 # Protein degradation    
+    #temp_fxn = [(0,5), (200, 50), (600, 5)]
+    temp_fxn = [(0, 1)]    
     # Species
     Pab1 = Species("Pab1", 100)
     C = Species("Chaperone", 50)
@@ -83,7 +79,6 @@ def main():
     system = Network(species_list, rxn_list)
     # Simulation
     x = system.simulate(0, 100, temp_fxn, None)
-    print x[:,3]
     # Plots
     colors = ['royalblue', 'gold', 'firebrick']
     fig, (axis2, axis) = plt.subplots(2, 1, figsize=(7,7))
@@ -91,7 +86,6 @@ def main():
         axis.plot(x[:,0], x[:,i], label=species_list[i-2].name, c=colors[i-2], linewidth=3)
     axis.legend(loc=0)
     axis.set_xlim(0,x[-1,0]+5)
-    axis.set_ylim(-2, 102)
     axis.set_xlabel("Time")
     axis.set_ylabel("Molecular species count")
     axis2.step(x[:, 0], x[:, 1], linewidth=3)
