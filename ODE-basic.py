@@ -13,31 +13,32 @@ import matplotlib.pyplot as plt
 from scipy.integrate import odeint
 from matplotlib import gridspec
 
+# Parameters from von der Haar 2008
 total_HSP104 = 28591 # unshocked conditions
 HSP104_deg = 0.011363 # min^-1
 total_Pab1 = 100115 # unshocked conditions
-Pab1_deg = 0.000891 # min^-1; basically 0 for our purposes
+#Pab1_deg = 0.000891 # min^-1; basically 0 for our purposes
 
 def deriv(z, t):
     Ea = 25
-    k1 = 4.*np.exp(Ea*(1-(298./T))) # Deactivation
-    k2 = .1 # Reactivation
-    k3 = .7 # Protein synthesis
-    k4 = .5 # Protein degradation
+    k1 = 40.*np.exp(Ea*(1-(298./T))) # Deactivation
+    k2 = .01 # Reactivation
+    k3 = 4. # Protein synthesis
+    k4 = HSP104_deg # Protein degradation
     
     dPab = -k1*z[0] + k2*z[1]*z[2]
     diPab = -k2*z[1]*z[2] + k1*z[0]
-    dC = k3*z[1] - k4*z[2]    
+    dC = k3*(z[1]/10.) - k4*z[2]    
     
     return np.array([dPab, diPab, dC])
 
 T = 298                 
 time1 = np.arange(0, 10, .1)
-zinit = np.array([90., 10., 50])
+zinit = np.array([total_Pab1, 0, total_HSP104])
 z1 = odeint(deriv, zinit, time1)
 Tlist = [T, T]
 
-T = 316
+T = 314
 time2 = np.arange(10, 20, .1)
 z2 = odeint(deriv, z1[-1], time2)
 Tlist.append(T)
@@ -81,7 +82,7 @@ plt.setp(ax2.get_xticklabels(), visible=False)
 ax = plt.subplot(gs[1], sharex=ax2)
 for i in xrange(3):
     ax.plot(times, final[:, i], label=names[i], c=colors[i], linewidth=2)
-ax.set_xlabel('time')
+ax.set_xlabel('time (min?)')
 ax.set_ylabel('Species Concentration')
 ax.legend(loc=0)
 plt.tight_layout()
