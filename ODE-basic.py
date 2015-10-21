@@ -32,6 +32,7 @@ zinit = np.array([90., 10., 50])
 z1 = odeint(deriv, zinit, time1)
 Tlist = [T, T]
 
+<<<<<<< HEAD
 T = 316
 time2 = np.arange(10, 20, .1)
 z2 = odeint(deriv, z1[-1], time2)
@@ -80,4 +81,4 @@ ax.set_xlabel('time')
 ax.set_ylabel('Species Concentration')
 ax.legend(loc=0)
 plt.tight_layout()
-plt.savefig('nohs.pdf')
+#plt.savefig('nohs.pdf')
