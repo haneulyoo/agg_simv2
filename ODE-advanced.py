@@ -14,6 +14,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 from scipy.integrate import odeint
 from matplotlib import gridspec
+import time
 
 
 # Parameters from von der Haar 2008
@@ -25,14 +26,14 @@ base_HSP104_mRNA = 4.7
 
 def deriv(z, t):
     Ea = 100. # assembly reaction activation energy (arb. units for now)
-    Ea2 = 100. # mRNA production activation energy (arb. units for now)
-    k1 = 5.*np.exp(Ea*(1-(303./T))) # Deactivation (M^-1*min^-1)
-    k2 = .001 # Reactivation 
-    k3 = 10. # Protein synthesis M^-1*min^-1
+    Ea2 = 120. # mRNA production activation energy (arb. units for now)
+    k1 = 1.*np.exp(Ea*(1-(303./T))) # Deactivation (M^-1*min^-1)
+    k2 = .0001 # Reactivation 
+    k3 = .1 # Protein synthesis M^-1*min^-1
     k4 = HSP104_deg # Protein degradation
     k5 = 10.*np.exp(Ea2*(1-(303./T))) # mRNA production rate (min^-1)
     k6 = .0001 # Pab-mRNA binding rate M^-2*min^-1
-    km6 = .1 # Pab-mRNA unbinding rate M^-1*min^-1
+    km6 = 1. # Pab-mRNA unbinding rate M^-1*min^-1
     
     dPab = -k1*z[0] + k2*z[1]*z[2] - k6*z[0]*z[3] + km6*z[4]
     diPab = k1*z[0] - k2*z[1]*z[2]
@@ -42,9 +43,10 @@ def deriv(z, t):
     
     return np.array([dPab, diPab, dC, dmRNAC, dPab_mRNAC])
 
+
 T = 303                 
 time1 = np.arange(0, 5, .01)
-zinit = np.array([total_Pab1, 0, total_HSP104, base_HSP104_mRNA, 0])
+zinit = np.array([total_Pab1, 0, total_HSP104, 10000, 0])
 z1 = odeint(deriv, zinit, time1)
 Tlist = [T, T]
 
@@ -54,7 +56,7 @@ z2 = odeint(deriv, z1[-1], time2)
 Tlist.append(T)
 
 T = 317
-time3 = np.arange(7, 25, .01)
+time3 = np.arange(7, 30, .01)
 z3 = odeint(deriv, z2[-1], time3)
 Tlist.append(T)
 
