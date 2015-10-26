@@ -14,7 +14,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 from scipy.integrate import odeint
 from matplotlib import gridspec
-import time
+#import time
 
 
 # Parameters from von der Haar 2008
@@ -35,28 +35,39 @@ def deriv(z, t):
     k6 = .0001 # Pab-mRNA binding rate M^-2*min^-1
     km6 = 1. # Pab-mRNA unbinding rate M^-1*min^-1
     
-    dPab = -k1*z[0] + k2*z[1]*z[2] - k6*z[0]*z[3] + km6*z[4]
-    diPab = k1*z[0] - k2*z[1]*z[2]
-    dC = k3*z[3] - k4*z[2]
-    dmRNAC = k5 - k6*z[0]*z[3] + km6*z[4]
-    dPab_mRNAC = k6*z[0]*z[3] - km6*z[4]
+    Pab = z[0]
+    iPab = z[1]
+    C = z[2]
+    mRNAC = z[3]
+    Pab_mRNAC = z[4]
+    mRNAB = z[5]
+    Pab_mRNAB = z[6]
+    #B = z[7]
     
-    return np.array([dPab, diPab, dC, dmRNAC, dPab_mRNAC])
+    dPab = -k1*Pab + k2*iPab*C - k6*Pab*mRNAC + km6*Pab_mRNAC - k6*Pab*mRNAB + km6*Pab_mRNAB
+    diPab = k1*Pab - k2*iPab*C
+    dC = k3*mRNAC - k4*C
+    dmRNAC = k5 - k6*Pab*mRNAC + km6*Pab_mRNAC
+    dPab_mRNAC = k6*Pab*mRNAC - km6*Pab_mRNAC
+    dmRNAB = km6*Pab_mRNAB - k6*Pab*mRNAB
+    dPab_mRNAB = k6*Pab*mRNAB - km6*Pab_mRNAB
+    
+    return np.array([dPab, diPab, dC, dmRNAC, dPab_mRNAC, dmRNAB, dPab_mRNAB])
 
 
 T = 303                 
-time1 = np.arange(0, 5, .01)
-zinit = np.array([total_Pab1, 0, total_HSP104, 10000, 0])
+time1 = np.arange(0, 0.5, .001)
+zinit = np.array([total_Pab1, 0, total_HSP104, 10000, 0, 100000, 0])
 z1 = odeint(deriv, zinit, time1)
 Tlist = [T, T]
 
 T = 317
-time2 = np.arange(5, 40, .01)
+time2 = np.arange(.5, 2.0, .001)
 z2 = odeint(deriv, z1[-1], time2)
 Tlist.append(T)
 
 T = 303
-time3 = np.arange(40, 60, .01)
+time3 = np.arange(2.0, 5.0, .001)
 z3 = odeint(deriv, z2[-1], time3)
 Tlist.append(T)
 
@@ -65,18 +76,18 @@ final = np.vstack((z1, z2, z3))
 
 
 # Plots
-names = ['$Pab1$', '$iPab1$', '$C$', '$mRNA_C$', '$Pab1:mRNA_C$']
-colors = ['royalblue', 'firebrick', 'gold', 'darkgreen', 'k']
+names = ['$Pab1$', '$iPab1$', '$C$', '$mRNA_C$', '$Pab1:mRNA_C$', '$mRNA_B$', '$Pab:mRNA_B$']
+colors = ['royalblue', 'firebrick', 'gold', 'darkgreen', 'k', 'peru', 'darkorange']
 
-f = plt.figure(figsize=(10, 5))
-gs = gridspec.GridSpec(2, 1, height_ratios=[1, 4])
+f = plt.figure(figsize=(10, 8))
+gs = gridspec.GridSpec(2, 1, height_ratios=[1, 5])
 ax2 = plt.subplot(gs[0])
 ax2.step([time1[0], time1[-1], time2[-1], time3[-1]], Tlist, c='k')
 ax2.set_ylabel('$\Delta$ T (K)')
 ax2.set_ylim(290, 320)
 plt.setp(ax2.get_xticklabels(), visible=False)
 ax = plt.subplot(gs[1], sharex=ax2)
-for i in xrange(5):
+for i in xrange(7):
     ax.plot(times, final[:, i], label=names[i], c=colors[i], linewidth=2)
 ax.set_xlabel('time (min?)')
 ax.set_ylabel('Species Concentration')
