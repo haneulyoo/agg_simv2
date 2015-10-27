@@ -7,7 +7,7 @@ translation. This iteration of the model includes explicit mRNA-protein inter-
 actions in an attempt to address this shortcoming.
 
 
-Species: Pab, iPab, C, mRNAC, Pab_mRNAC, B, mRNAB, Pab_mRNAB
+Species: Pab, iPab, C, mRNAC, Pab_mRNAC, mRNAB, Pab_mRNAB
 """
 
 import numpy as np
@@ -26,15 +26,15 @@ base_HSP104_mRNA = 4.7
 
 
 def deriv(z, t):
-    Ea = 50. # assembly reaction activation energy (arb. units for now)
-    Ea2 = 150. # mRNA production activation energy (arb. units for now)
-    k1 = 10.*np.exp(Ea*(1-(303./T))) # Deactivation (M^-1*min^-1)
-    k2 = .0001 # Reactivation 
-    k3 = .1 # Protein synthesis
+    Ea = 40. # assembly reaction activation energy (arb. units for now)
+    Ea2 = 100. # mRNA production activation energy (arb. units for now)
+    k1 = 1.*np.exp(Ea*(1-(303./T))) # Deactivation (M^-1*min^-1)
+    k2 = .00005 # Reactivation 
+    k3 = 105. # Protein synthesis M^-1*min^-1
     k4 = HSP104_deg # Protein degradation
-    k5 = 50.*np.exp(Ea2*(1-(303./T))) # mRNA production rate (min^-1)
-    k6 = .001 # Pab-mRNA binding rate
-    km6 = 1. # Pab-mRNA unbinding rate
+    k5 = 5.*np.exp(Ea2*(1-(303./T))) # mRNA production rate (min^-1)
+    k6 = .001 # Pab-mRNA binding rate M^-2*min^-1
+    km6 = .01 # Pab-mRNA unbinding rate M^-1*min^-1
     k7 = .01 # mRNA decay rate    
     
     Pab = z[0]
