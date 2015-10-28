@@ -26,16 +26,16 @@ base_HSP104_mRNA = 4.7
 
 
 def deriv(z, t):
-    Ea = 40. # assembly reaction activation energy (arb. units for now)
-    Ea2 = 100. # mRNA production activation energy (arb. units for now)
-    k1 = 1.*np.exp(Ea*(1-(303./T))) # Deactivation (M^-1*min^-1)
-    k2 = .00005 # Reactivation 
-    k3 = 105. # Protein synthesis M^-1*min^-1
+    Ea = 1. # assembly reaction activation energy (arb. units for now)
+    Ea2 = 120. # mRNA production activation energy (arb. units)
+    k1 = .1*np.exp(Ea*(1-(303./T))) # Deactivation (M^-1*min^-1)
+    k2 = .000005 # Reactivation 
+    k3 = .1 # Protein synthesis M^-1*min^-1
     k4 = HSP104_deg # Protein degradation
-    k5 = 5.*np.exp(Ea2*(1-(303./T))) # mRNA production rate (min^-1)
-    k6 = .001 # Pab-mRNA binding rate M^-2*min^-1
-    km6 = .01 # Pab-mRNA unbinding rate M^-1*min^-1
-    k7 = .01 # mRNA decay rate    
+    k5 = 10.*np.exp(Ea2*(1-(303./T))) # mRNA production rate (min^-1)
+    k6 = .000001 # Pab-mRNA binding rate M^-2*min^-1
+    km6 = .0001 # Pab-mRNA unbinding rate M^-1*min^-1
+    k7 = .0001 # mRNA decay rate    
     
     Pab = z[0]
     iPab = z[1]
@@ -44,7 +44,6 @@ def deriv(z, t):
     Pab_mRNAC = z[4]
     mRNAB = z[5]
     Pab_mRNAB = z[6]
-    B = z[7]
     
     dPab = -k1*Pab + k2*iPab*C - k6*Pab*mRNAC + km6*Pab_mRNAC - k6*Pab*mRNAB + km6*Pab_mRNAB
     diPab = k1*Pab - k2*iPab*C
@@ -53,35 +52,34 @@ def deriv(z, t):
     dPab_mRNAC = k6*Pab*mRNAC - km6*Pab_mRNAC
     dmRNAB = km6*Pab_mRNAB - k6*Pab*mRNAB
     dPab_mRNAB = k6*Pab*mRNAB - km6*Pab_mRNAB
-    dB = k3*Pab_mRNAB - k4*B
     
-    return np.array([dPab, diPab, dC, dmRNAC, dPab_mRNAC, dmRNAB, dPab_mRNAB, dB])
+    return np.array([dPab, diPab, dC, dmRNAC, dPab_mRNAC, dmRNAB, dPab_mRNAB])
 
 
 T = 317                 
 time1 = np.arange(0, 1.0, .001)
-zinit = np.array([total_Pab1, 0, total_HSP104, 5, 0, 100000, 0, 40000])
+zinit = np.array([total_Pab1, 0, total_HSP104, 5, 0, 12200, 0])
 z1 = odeint(deriv, zinit, time1)
 Tlist = [T, T]
 
 T = 317
-time2 = np.arange(1.0, 4.0, .001)
+time2 = np.arange(1.0, 10.0, .001)
 z2 = odeint(deriv, z1[-1], time2)
 Tlist.append(T)
 
 T = 303
-time3 = np.arange(4.0, 7.0, .001)
+time3 = np.arange(10.0, 60.0, .001)
 z3 = odeint(deriv, z2[-1], time3)
 Tlist.append(T)
 
 times = np.concatenate((time1, time2, time3))
 final = np.vstack((z1, z2, z3))
 
-print final[4000]
+print z2[-1]
 
 # Plots
-names = ['$Pab1$', '$iPab1$', '$C$', '$mRNA_C$', '$Pab1:mRNA_C$', '$mRNA_B$', '$Pab:mRNA_B$', '$B$']
-colors = ['royalblue', 'firebrick', 'gold', 'darkgreen', 'k', 'peru', 'darkorange', 'indigo']
+names = ['$Pab1$', '$iPab1$', '$C$', '$mRNA_C$', '$Pab1:mRNA_C$', '$mRNA_B$', '$Pab:mRNA_B$']
+colors = ['royalblue', 'firebrick', 'gold', 'darkgreen', 'k', 'indigo', 'darkorange']
 
 f = plt.figure(figsize=(9, 6))
 gs = gridspec.GridSpec(2, 1, height_ratios=[1, 5])
@@ -91,7 +89,7 @@ ax2.set_ylabel('$\Delta$ T (K)')
 ax2.set_ylim(290, 320)
 plt.setp(ax2.get_xticklabels(), visible=False)
 ax = plt.subplot(gs[1], sharex=ax2)
-for i in xrange(8):
+for i in xrange(7):
     ax.plot(times, final[:, i], label=names[i], c=colors[i], linewidth=2)
 ax.set_xlabel('time (min?)')
 ax.set_ylabel('Species Count')
