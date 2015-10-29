@@ -26,7 +26,7 @@ base_HSP104_mRNA = 4.7
 
 
 def deriv(z, t):
-    Ea = 1. # assembly reaction activation energy (arb. units for now)
+    Ea = .1 # assembly reaction activation energy (arb. units for now)
     Ea2 = 120. # mRNA production activation energy (arb. units)
     k1 = .1*np.exp(Ea*(1-(303./T))) # Deactivation (M^-1*min^-1)
     k2 = .000002 # Reactivation 
@@ -56,7 +56,7 @@ def deriv(z, t):
     return np.array([dPab, diPab, dC, dmRNAC, dPab_mRNAC, dmRNAB, dPab_mRNAB])
 
 
-T = 317                 
+T = 317  
 time1 = np.arange(0, 1.0, .001)
 zinit = np.array([total_Pab1, 0, total_HSP104, 5, 0, 12200, 0])
 z1 = odeint(deriv, zinit, time1)
