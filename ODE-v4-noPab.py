@@ -36,7 +36,7 @@ def deriv(z, t):
     k5 = 10.*np.exp(Ea2*(1-(303./T))) # mRNA production rate (min^-1)
     k6 = .000001 # Pab-mRNA binding rate M^-2*min^-1
     km6 = .01 # Pab-mRNA unbinding rate M^-1*min^-1
-    k7 = .003 # mRNA decay rate    
+    k7 = .003 # mRNA decay rate 
     
     Pab = z[0]
     iPab = z[1]
@@ -46,11 +46,11 @@ def deriv(z, t):
     mRNAB = z[5]
     Pab_mRNAB = z[6]
     
-    dPab = -k1*Pab + k2*iPab*C - k6*Pab*mRNAC + km6*Pab_mRNAC - k6*Pab*mRNAB + km6*Pab_mRNAB
+    dPab = -k1*Pab + k2*iPab*C - k6*Pab*mRNAB + km6*Pab_mRNAB
     diPab = k1*Pab - k2*iPab*C
     dC = k3*mRNAC - k4*C
-    dmRNAC = k5 - k6*Pab*mRNAC + km6*Pab_mRNAC - k7*mRNAC
-    dPab_mRNAC = k6*Pab*mRNAC - km6*Pab_mRNAC
+    dmRNAC = k5 - k7*mRNAC
+    dPab_mRNAC = 0
     dmRNAB = km6*Pab_mRNAB - k6*Pab*mRNAB
     dPab_mRNAB = k6*Pab*mRNAB - km6*Pab_mRNAB
     
