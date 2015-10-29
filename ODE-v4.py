@@ -29,13 +29,13 @@ def deriv(z, t):
     Ea = 1. # assembly reaction activation energy (arb. units for now)
     Ea2 = 120. # mRNA production activation energy (arb. units)
     k1 = .1*np.exp(Ea*(1-(303./T))) # Deactivation (M^-1*min^-1)
-    k2 = .000005 # Reactivation 
-    k3 = .1 # Protein synthesis M^-1*min^-1
+    k2 = .000002 # Reactivation 
+    k3 = .15 # Protein synthesis M^-1*min^-1
     k4 = HSP104_deg # Protein degradation
     k5 = 10.*np.exp(Ea2*(1-(303./T))) # mRNA production rate (min^-1)
     k6 = .000001 # Pab-mRNA binding rate M^-2*min^-1
-    km6 = .0001 # Pab-mRNA unbinding rate M^-1*min^-1
-    k7 = .0001 # mRNA decay rate    
+    km6 = .01 # Pab-mRNA unbinding rate M^-1*min^-1
+    k7 = 0 # mRNA decay rate    
     
     Pab = z[0]
     iPab = z[1]
@@ -68,14 +68,14 @@ z2 = odeint(deriv, z1[-1], time2)
 Tlist.append(T)
 
 T = 303
-time3 = np.arange(10.0, 60.0, .001)
+time3 = np.arange(10.0, 180.0, .001)
 z3 = odeint(deriv, z2[-1], time3)
 Tlist.append(T)
 
 times = np.concatenate((time1, time2, time3))
 final = np.vstack((z1, z2, z3))
 
-print z2[-1]
+print z2[-1, 3] + z2[-1, 4]
 
 # Plots
 names = ['$Pab1$', '$iPab1$', '$C$', '$mRNA_C$', '$Pab1:mRNA_C$', '$mRNA_B$', '$Pab:mRNA_B$']
@@ -91,7 +91,7 @@ plt.setp(ax2.get_xticklabels(), visible=False)
 ax = plt.subplot(gs[1], sharex=ax2)
 for i in xrange(7):
     ax.plot(times, final[:, i], label=names[i], c=colors[i], linewidth=2)
-ax.set_xlabel('time (min?)')
+ax.set_xlabel('time (min)')
 ax.set_ylabel('Species Count')
 ax.legend(loc=0)
 plt.tight_layout()

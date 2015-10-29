@@ -21,7 +21,7 @@ total_Pab1 = 100115 # unshocked conditions
 
 def deriv(z, t):
     Ea = 1
-    k1 = .5*np.exp(Ea*(1-(303./T))) # Deactivation
+    k1 = .4*np.exp(Ea*(1-(303./T))) # Deactivation
     k2 = .000005 # Reactivation
     k3 = .5 # Protein synthesis
     k4 = HSP104_deg # Protein degradation
