@@ -46,11 +46,11 @@ def deriv(z, t):
     mRNAB = z[5]
     Pab_mRNAB = z[6]
     
-    dPab = -k1*Pab + k2*iPab*C - k6*Pab*mRNAC + km6*Pab_mRNAC - k6*Pab*mRNAB + km6*Pab_mRNAB
+    dPab = -k1*Pab + k2*iPab*C - k6*Pab*mRNAB + km6*Pab_mRNAB
     diPab = k1*Pab - k2*iPab*C
     dC = k3*mRNAC - k4*C
-    dmRNAC = k5 - k6*Pab*mRNAC + km6*Pab_mRNAC - k7*mRNAC
-    dPab_mRNAC = k6*Pab*mRNAC - km6*Pab_mRNAC
+    dmRNAC = k5 - k7*mRNAC
+    dPab_mRNAC = 0
     dmRNAB = km6*Pab_mRNAB - k6*Pab*mRNAB
     dPab_mRNAB = k6*Pab*mRNAB - km6*Pab_mRNAB
     
