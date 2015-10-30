@@ -1,0 +1,32 @@
+predictions
+
+change pab levels -> levels of chaperone during heat shock recovery
+predictions about extended heat shock between competing hyptheses -> mRNA degradation vs. Pab binding
+
+Delineate hypotheses - can both explain observed phenomenon?
+
+If so (or even if not), what happens when we change the regime of the shock? Is there a testable difference between the 
+
+Can we make predictions based on the amount of Pab available? "Easy" to titrate both in vivo and in vitro.
+
+Levels of chaperone induction.
+
+
+
+
+
+
+
+does the density of the bulk cytosol change during heat shock?
+
+what happens to cells when you heat them infinitely slowly?
+
+can you predict the pellet?
+
+can you predict assembly?
+
+
+
+MM kinetics of chaperone unbinding
+
+structure and reactivity of granule components
