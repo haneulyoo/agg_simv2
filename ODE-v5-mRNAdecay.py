@@ -30,13 +30,13 @@ def deriv(z, t):
     Ea2 = 120. # mRNA production activation energy (arb. units)
     k1 = .1*np.exp(Ea*(1-(303./T))) # Deactivation (M^-1*min^-1)
     k2 = .000003 # Reactivation 
-    k3 = .35 # Protein synthesis M^-1*min^-1
+    k3 = .3 # Protein synthesis M^-1*min^-1
     #k4 = HSP104_deg # Protein degradation
     k4 = 0.02 # very close to the (log growth) determined value, for what it's worth 
     k5 = 10.*np.exp(Ea2*(1-(303./T))) # mRNA production rate (min^-1)
     k6 = .000001 # Pab-mRNA binding rate M^-2*min^-1
     km6 = .01 # Pab-mRNA unbinding rate M^-1*min^-1
-    k7 = .1 # mRNA decay rate    
+    k7 = .5 # mRNA decay rate    
     
     Pab = z[0]
     iPab = z[1]
