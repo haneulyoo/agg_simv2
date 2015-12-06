@@ -36,7 +36,7 @@ def deriv(z, t):
     k5 = 10.*np.exp(Ea2*(1-(303./T))) # mRNA production rate (min^-1)
     k6 = .000001 # Pab-mRNA binding rate M^-2*min^-1
     km6 = .01 # Pab-mRNA unbinding rate M^-1*min^-1
-    k7 = .1 # mRNA decay rate    
+    k7 = .01 # mRNA decay rate    
     
     Pab = z[0]
     iPab = z[1]
@@ -68,7 +68,7 @@ time2 = np.arange(1.0, 10.0, .001)
 z2 = odeint(deriv, z1[-1], time2)
 Tlist.append(T)
 
-T = 317
+T = 303
 time3 = np.arange(10.0, 180.0, .001)
 z3 = odeint(deriv, z2[-1], time3)
 Tlist.append(T)
