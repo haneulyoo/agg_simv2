@@ -27,17 +27,17 @@ estimated_HSP104_hs = 250 #molecules/cell
 
 
 def deriv(z, t):
-    Ea = 75. # assembly reaction activation energy (arb. units for now)
+    Ea = 50. # assembly reaction activation energy (arb. units for now)
     Ea2 = 25. # mRNA production activation energy (arb. units)
     k1 = .045*np.exp(Ea*(1-(303./T))) # Deactivation (M^-1*min^-1)
     k2 = .000002 # Reactivation 
     k3 = 5 # Protein synthesis M^-1*min^-1
     #k4 = HSP104_deg # Protein degradation
-    k4 = 0.03 #Protein degradation
+    k4 = 0.01 #Protein degradation
     k5 = 10.*np.exp(Ea2*(1-(303./T))) # mRNA production rate (min^-1)
     k6 = .003 # Pab-mRNA binding rate M^-2*min^-1
     km6 = .03 # Pab-mRNA unbinding rate M^-1*min^-1
-    k7 = .01 # mRNA decay rate    
+    k7 = .1 # mRNA decay rate    
     
     Pab = z[0]
     iPab = z[1]
@@ -47,11 +47,11 @@ def deriv(z, t):
     mRNAB = z[5]
     Pab_mRNAB = z[6]
     
-    dPab = -k1*Pab + k2*iPab*C - k6*Pab*mRNAB + km6*Pab_mRNAB
+    dPab = -k1*Pab + k2*iPab*C - k6*Pab*mRNAC + km6*Pab_mRNAC - k6*Pab*mRNAB + km6*Pab_mRNAB
     diPab = k1*Pab - k2*iPab*C
     dC = k3*mRNAC - k4*C
-    dmRNAC = k5 - k7*mRNAC
-    dPab_mRNAC = 0
+    dmRNAC = k5 - k6*Pab*mRNAC + km6*Pab_mRNAC - k7*mRNAC
+    dPab_mRNAC = k6*Pab*mRNAC - km6*Pab_mRNAC
     dmRNAB = km6*Pab_mRNAB - k6*Pab*mRNAB
     dPab_mRNAB = k6*Pab*mRNAB - km6*Pab_mRNAB
     
@@ -80,7 +80,7 @@ final = np.vstack((z1, z2, z3))
 print 'Total C mRNA after heat shock: ' + str(z2[-1, 3] + z2[-1, 4])
 
 # Plots
-names = ['$Pab1$', '$iPab1$', '$C$', '$mRNA_C$', '$Pab1:mRNA_C$', '$mRNA_B$', '$Pab:mRNA_B$']
+names = ['$Pab1$', '$iPab1$', '$C$', '$free mRNA_C$', '$Pab1:mRNA_C$', '$free mRNA_B$', '$Pab:mRNA_B$']
 colors = ['royalblue', 'firebrick', 'gold', 'darkgreen', 'k', 'indigo', 'darkorange']
 
 f = plt.figure(figsize=(10, 7))
@@ -93,6 +93,7 @@ plt.setp(ax2.get_xticklabels(), visible=False)
 ax = plt.subplot(gs[1], sharex=ax2)
 for i in xrange(7):
     ax.plot(times, final[:, i], label=names[i], c=colors[i], linewidth=2)
+ax.plot(times, final[:, 3] + final[:, 4], label='total $mRNA_C$', color='papayawhip', linewidth=2)
 ax.set_xlabel('time (min)')
 ax.set_ylabel('Species Count')
 ax.set_yscale('log')
