@@ -17,9 +17,10 @@ from matplotlib import gridspec
 
 
 # Parameters from von der Haar 2008
-total_HSP104 = 28591 # unshocked conditdions
+total_HSP104 = 28591 # unshocked conditions
 HSP104_deg = 0.011363 # min^-1
-total_Pab1 = 100115 # unshocked conditions
+#total_Pab1 = 100115 # unshocked conditions
+total_Pab1 = 50000
 #Pab1_deg = 0.000891 # min^-1; basically 0 for our purposes
 base_HSP104_mRNA = 4.7
 total_cellular_mRNA = 36000 #&
@@ -48,24 +49,24 @@ def deriv(z, t):
     C = z[2]
     mRNAC = z[3]
     Pab_mRNAC = z[4]
-#    mRNAB = z[5]
-#    Pab_mRNAB = z[6]
+    mRNAB = z[5]
+    Pab_mRNAB = z[6]
     
-    dPab = -k1*Pab + k2*iPab*C - k6*Pab*mRNAC + km6*Pab_mRNAC# - k6*Pab*mRNAB + km6*Pab_mRNAB
+    dPab = -k1*Pab + k2*iPab*C - k6*Pab*mRNAC + km6*Pab_mRNAC - k6*Pab*mRNAB + km6*Pab_mRNAB
     diPab = k1*Pab - k2*iPab*C
     dC = k3*mRNAC - k4*C
     dmRNAC = k5 - k6*Pab*mRNAC + km6*Pab_mRNAC - k7*mRNAC
     dPab_mRNAC = k6*Pab*mRNAC - km6*Pab_mRNAC
-#    dmRNAB = km6*Pab_mRNAB - k6*Pab*mRNAB
-#    dPab_mRNAB = k6*Pab*mRNAB - km6*Pab_mRNAB
+    dmRNAB = km6*Pab_mRNAB - k6*Pab*mRNAB
+    dPab_mRNAB = k6*Pab*mRNAB - km6*Pab_mRNAB
     
-#    return np.array([dPab, diPab, dC, dmRNAC, dPab_mRNAC, dmRNAB, dPab_mRNAB])
-    return np.array([dPab, diPab, dC, dmRNAC, dPab_mRNAC])
+    return np.array([dPab, diPab, dC, dmRNAC, dPab_mRNAC, dmRNAB, dPab_mRNAB])
+ #   return np.array([dPab, diPab, dC, dmRNAC, dPab_mRNAC])
 
 
 T = 303 
 time1 = np.arange(0, 10.0, .01)
-zinit = np.array([total_Pab1, 0, total_HSP104, 5, 0])#, total_cellular_mRNA, 0])
+zinit = np.array([total_Pab1, 0, total_HSP104, 5, 0, total_cellular_mRNA, 0])
 z1 = odeint(deriv, zinit, time1)
 Tlist = [T, T]
 
@@ -85,11 +86,11 @@ final = np.vstack((z1, z2, z3))
 print 'Total C mRNA after heat shock: ' + str(z2[-1, 3] + z2[-1, 4])
 
 # Plots
-#names = ['$Pab1$', '$iPab1$', '$C$', '$free mRNA_C$', '$Pab1:mRNA_C$', '$free mRNA_B$', '$Pab:mRNA_B$']
-#colors = ['royalblue', 'firebrick', 'gold', 'darkgreen', 'k', 'indigo', 'darkorange']
+names = ['$Pab1$', '$iPab1$', '$C$', '$free mRNA_C$', '$Pab1:mRNA_C$', '$free mRNA_B$', '$Pab:mRNA_B$']
+colors = ['royalblue', 'firebrick', 'gold', 'darkgreen', 'k', 'indigo', 'darkorange']
 
-names = ['free $Pab1$', '$iPab1$', '$C$', 'free $mRNA_C$', '$Pab1:mRNA_C$']
-colors = ['royalblue', 'firebrick', 'gold', 'darkgreen', 'k']
+#names = ['free $Pab1$', '$iPab1$', '$C$', 'free $mRNA_C$', '$Pab1:mRNA_C$']
+#colors = ['royalblue', 'firebrick', 'gold', 'darkgreen', 'k']
 
 f = plt.figure(figsize=(8, 6))
 gs = gridspec.GridSpec(2, 1, height_ratios=[1, 5])
@@ -105,7 +106,7 @@ for i in xrange(len(names)):
 #ax.plot(times, final[:, 3] + final[:, 4], label='total $mRNA_C$', color='papayawhip', linewidth=3)
 ax.set_xlabel('time (min)')
 ax.set_ylabel('Species Count')
-ax.set_yscale('log')
+#ax.set_yscale('log')
 ax.legend(loc='upper right', fontsize=10)
 plt.tight_layout()
 
