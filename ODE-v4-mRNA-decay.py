@@ -33,14 +33,14 @@ def deriv(z, t):
     Ea = 80. # assembly reaction activation energy (arb. units for now)
     Ea2 = 125. # mRNA production activation energy (arb. units)
     k1 = .01*np.exp(Ea*(1-(303./T))) # Deactivation (M^-1*min^-1)
-    k2 = .000001 # Reactivation 
+    k2 = .0000005 # Reactivation 
     k3 = 1000 # Protein synthesis M^-1*min^-1
     #k4 = HSP104_deg # Protein degradation
-    k4 = 0.005 #Protein degradation
+    k4 = 0.01 #Protein degradation
     k5 = .1*np.exp(Ea2*(1-(303./T))) # mRNA production rate (min^-1)
     k6 = .18 # Pab-mRNA on rate s^-1 $
     km6 = 1.8 # Pab-mRNA off rate s^-1 $
-    k7 = .1 # mRNA decay rate    
+    k7 = .03 # mRNA decay rate    
 
 # $ from Sachs 1987
     
@@ -51,14 +51,22 @@ def deriv(z, t):
     Pab_mRNAC = z[4]
     mRNAB = z[5]
     Pab_mRNAB = z[6]
-    
-    dPab = -k1*Pab + k2*iPab*C - k6*Pab*mRNAC + km6*Pab_mRNAC - k6*Pab*mRNAB + km6*Pab_mRNAB
+        
     diPab = k1*Pab - k2*iPab*C
     dC = k3*mRNAC - k4*C
-    dmRNAC = k5 - k6*Pab*mRNAC + km6*Pab_mRNAC - k7*mRNAC
-    dPab_mRNAC = k6*Pab*mRNAC - km6*Pab_mRNAC
     dmRNAB = km6*Pab_mRNAB - k6*Pab*mRNAB
     dPab_mRNAB = k6*Pab*mRNAB - km6*Pab_mRNAB
+    
+    # For Pab-dependent model
+    dPab = -k1*Pab + k2*iPab*C - k6*Pab*mRNAC + km6*Pab_mRNAC - k6*Pab*mRNAB + km6*Pab_mRNAB
+    dmRNAC = k5 - k6*Pab*mRNAC + km6*Pab_mRNAC - k7*mRNAC    
+    dPab_mRNAC = k6*Pab*mRNAC - km6*Pab_mRNAC
+    
+    # For Pab-independent model
+#    dPab = -k1*Pab + k2*iPab*C - k6*Pab*mRNAB + km6*Pab_mRNAB
+#    dmRNAC = k5 - k7*mRNAC
+#    dPab_mRNAC = 0
+    
     
     return np.array([dPab, diPab, dC, dmRNAC, dPab_mRNAC, dmRNAB, dPab_mRNAB])
  #   return np.array([dPab, diPab, dC, dmRNAC, dPab_mRNAC])
