@@ -36,7 +36,7 @@ def deriv(z, t):
     k2 = .0000005 # Reactivation 
     k3 = 1000 # Protein synthesis M^-1*min^-1
     #k4 = HSP104_deg # Protein degradation
-    k4 = 0.01 #Protein degradation
+    k4 = 0.005 #Protein degradation
     k5 = .1*np.exp(Ea2*(1-(303./T))) # mRNA production rate (min^-1)
     k6 = .18 # Pab-mRNA on rate s^-1 $
     km6 = 1.8 # Pab-mRNA off rate s^-1 $
@@ -73,18 +73,18 @@ def deriv(z, t):
 
 
 T = 303 
-time1 = np.arange(0, 10.0, .01)
+time1 = np.arange(0, 60.0, .01)
 zinit = np.array([total_Pab1, 0, total_HSP104, 5, 0, total_cellular_mRNA, 0])
 z1 = odeint(deriv, zinit, time1)
 Tlist = [T, T]
 
 T = 317
-time2 = np.arange(10.0, 20.0, .01)
+time2 = np.arange(60.0, 70.0, .01)
 z2 = odeint(deriv, z1[-1], time2)
 Tlist.append(T)
 
 T = 303
-time3 = np.arange(20.0, 80.0, .01)
+time3 = np.arange(70.0, 400.0, .01)
 z3 = odeint(deriv, z2[-1], time3)
 Tlist.append(T)
 
@@ -114,7 +114,7 @@ for i in xrange(len(names)):
 #ax.plot(times, final[:, 3] + final[:, 4], label='total $mRNA_C$', color='papayawhip', linewidth=3)
 ax.set_xlabel('time (min)')
 ax.set_ylabel('Species Count')
-#ax.set_yscale('log')
+ax.set_yscale('log')
 ax.legend(loc='upper right', fontsize=10)
 plt.tight_layout()
 
