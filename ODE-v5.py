@@ -31,6 +31,8 @@ def deriv(z, t):
     #k4 = HSP104_deg # Protein degradation
     k4 = 0.005 #Protein degradation
     k5 = .1*np.exp(Ea2*(1-(303./T))) # mRNA production rate (min^-1)
+#    k6 = 105 # Pab-mRNA on rate min^-1 $
+#    km6 = 1.8 # Pab-mRNA off rate min^-1 $
     k6 = .18 # Pab-mRNA on rate min^-1 $
     km6 = 1.8 # Pab-mRNA off rate min^-1 $
     k7 = 0.03 # mRNA decay rate    
