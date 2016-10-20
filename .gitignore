@@ -4,7 +4,9 @@ Yeast protein half life and measurement technique.xlsx
 *.pyc
 figures/
 notes/
-
+.ipynb_checkpoints/
+*-checkpoint.ipynb
+*.swp
 chaperone-production-generalized.ipynb
-
+jan-2016.ipynb
 .ipynb_checkpoints/chaperone-production-generalized-checkpoint.ipynb
