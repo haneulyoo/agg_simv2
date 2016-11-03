@@ -65,7 +65,7 @@ def deriv(z, t):
 
 T = 303 
 time1 = np.arange(0, 10.0, .01)
-zinit = np.array([total_Pab1, 0, total_HSP104, 5, 0, total_cellular_mRNA, 0])
+zinit = np.array([total_Pab1, 0, total_HSP104, 5, 0])
 z1 = odeint(deriv, zinit, time1)
 Tlist = [T, T]
 
@@ -82,7 +82,7 @@ Tlist.append(T)
 times = np.concatenate((time1, time2, time3))
 final = np.vstack((z1, z2, z3))
 
-print 'Total C mRNA after heat shock: ' + str(z2[-1, 3] + z2[-1, 4])
+print('Total C mRNA after heat shock: ' + str(z2[-1, 3] + z2[-1, 4]))
 
 # Plots
 names = ['$Pab1$', '$iPab1$', '$C$', '$free mRNA_C$', '$Pab1:mRNA_C$']
@@ -96,7 +96,7 @@ ax2.set_ylabel('$\Delta$ T (K)')
 ax2.set_ylim(290, 320)
 plt.setp(ax2.get_xticklabels(), visible=False)
 ax = plt.subplot(gs[1], sharex=ax2)
-for i in xrange(len(names)):
+for i in range(len(names)):
     ax.plot(times, final[:, i], label=names[i], c=colors[i], linewidth=2)
 #ax.plot(times, final[:, 0] + final[:, -1], c='b', linewidth=2, label='Total active Pab1')
 #ax.plot(times, final[:, 3] + final[:, 4], label='total $mRNA_C$', color='papayawhip', linewidth=3)
@@ -106,4 +106,4 @@ ax.set_ylabel('Species Count')
 ax.legend(loc='upper right', fontsize=10)
 plt.tight_layout()
 
-print final[-1, :]
+print(final[-1, :])

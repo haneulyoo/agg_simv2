@@ -77,7 +77,7 @@ Tlist.append(T)
 times = np.concatenate((time1, time2, time3))
 final = np.vstack((z1, z2, z3))
 
-print final[4000]
+print(final[4000])
 
 # Plots
 names = ['$Pab1$', '$iPab1$', '$C$', '$mRNA_C$', '$Pab1:mRNA_C$', '$mRNA_B$', '$Pab:mRNA_B$', '$B$']
@@ -91,7 +91,7 @@ ax2.set_ylabel('$\Delta$ T (K)')
 ax2.set_ylim(290, 320)
 plt.setp(ax2.get_xticklabels(), visible=False)
 ax = plt.subplot(gs[1], sharex=ax2)
-for i in xrange(8):
+for i in range(8):
     ax.plot(times, final[:, i], label=names[i], c=colors[i], linewidth=2)
 ax.set_xlabel('time (min?)')
 ax.set_ylabel('Species Count')
