@@ -25,7 +25,7 @@ def deriv(z, t):
     Ea = 80.                             # activation energy (arb. units)
     k1 = .1*np.exp(Ea*(1-(303./T)))    # mRNA production (fxn of temperature)
     k2 = 1                           # Protein synthesis min^-1 
-    k3 = .05                           # Fluorophore maturation
+    k3 = . 5                           # Fluorophore maturation
     k4 = .1                           # Protein degradation/dilution
     k5 = 0.005                          # mRNA degradation
     
