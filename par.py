@@ -2,7 +2,6 @@
 # -*- coding: utf-8 -*-
 """
 Created on Mon Aug 14 09:19:22 2017
-
 @author: Triandafillou
 
 Simulation of a simple positive autoregulatory loop with the species X
@@ -18,8 +17,8 @@ plt.style.use('ggplot')
 # parameters
 beta_max = 3
 k_deg = 1
-K = 1.1
-n = 3
+K = 1
+n = 2
 
 initial_X = 2
 
@@ -36,10 +35,29 @@ zinit = np.array([initial_X])
 
 z_f = odeint(deriv, zinit, t)
 z_f2 = odeint(deriv, np.array([0.5]), t)
+z_f3 = odeint(deriv, np.array([0.7739]), t)
+
+#plt.figure(figsize=(4,2.5))
+#plt.plot(t, z_f, 'r--', t, z_f2, 'b--', t, z_f3, 'g--')
+#plt.xlabel("Time")
+#plt.ylabel("[X]")
+#plt.tight_layout
+#plt.show
+
+
+
+# plot initial vs. final
+Xi = np.arange(0.37, 0.4, 0.0001)
+Xf = []
+
+for i in Xi:
+    z_f = odeint(deriv, np.array([i]), t)
+    Xf.append(z_f[-1])
 
 plt.figure(figsize=(4,2.5))
-plt.plot(t, z_f, 'r--', t, z_f2, 'b--')
-plt.xlabel("Time")
-plt.ylabel("[X]")
+plt.plot(Xi, Xf, '.')
+plt.xlabel("Inital [X]")
+plt.ylabel("Final [X]")
 plt.tight_layout
 plt.show
+
