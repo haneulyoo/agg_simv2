@@ -73,5 +73,29 @@ f = plt.figure(figsize=(10,5))
 ax = f.add_subplot(111)
 for i in range(len(z)):
     ax.plot(time, z[i][:,5], color = colors[i], label = names[i])
-ax.legend()
+ax.legend(title="Temperature")
 plt.title("Reporter level vs. time")
+
+
+f = plt.figure(figsize=(10,5))
+ax = f.add_subplot(111)
+for i in range(len(z)):
+    ax.plot(time, z[i][:,2], color = colors[i], label = names[i])
+ax.legend(title="Temperature")
+plt.title("HSP70-HSF1 complex concentration vs. time")
+
+
+f = plt.figure(figsize=(10,5))
+ax = f.add_subplot(111)
+for i in range(len(z)):
+    ax.plot(time, z[i][:,3]+z[i][:,4], color = colors[i], label = names[i])
+ax.legend(title="Temperature")
+plt.title("total unfolded protein vs. time")
+
+
+f = plt.figure(figsize=(10,5))
+ax = f.add_subplot(111)
+for i in range(len(z)):
+    ax.plot(time, z[i][:,0]+z[i][:,2]+z[i][:,3], color = colors[i], label = names[i])
+ax.legend(title="Temperature")
+plt.title("total HSP70 vs. time")
