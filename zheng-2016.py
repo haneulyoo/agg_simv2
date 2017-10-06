@@ -106,24 +106,32 @@ plt.title("Free client vs. time")
 #ax.legend(title="Temperature")
 #plt.title("total HSP70 vs. time")
 
+f = plt.figure(figsize = (8,4))
+ax = f.add_subplot(111)
+ax.plot(z[3][:,5], z[3][:,4])
+ax.set_ylabel("Free client level")
+ax.set_xlabel("Reporter level")
+
+
+
 
 #Plotting time to zero unfolded protein as a function of temperature
-T = np.linspace(35, 46)
-times = []
-
-for t in T:
-    UP_0 = 0.0024*np.exp(0.215*t) # generates initial value of UP; empirical
-    time = np.arange(0, 200, 0.1)
-    zinit = np.array([HSP_0, HSF1_0, HSP_HSF1_0, HSP_UP_0, UP_0, YFP_0])
-    x = odeint(deriv, zinit, time) # run the simulation
-    times.append(np.min(np.where(x[:,4] < 1)))
-    
-    
-f = plt.figure(figsize=(10,5))
-ax = f.add_subplot(111)
-ax.plot(T, times)
-ax.set_xlabel("Shock temperature (C)")
-ax.set_ylabel("Time to clear unfolded protein/clients (min)")
-ax.set_yscale("log")
-ax.annotate("[P](0) = 0.0024*exp(0.215*temp)", (35, 500))
+#T = np.linspace(35, 46)
+#times = []
+#
+#for t in T:
+#    UP_0 = 0.0024*np.exp(0.215*t) # generates initial value of UP; empirical
+#    time = np.arange(0, 200, 0.1)
+#    zinit = np.array([HSP_0, HSF1_0, HSP_HSF1_0, HSP_UP_0, UP_0, YFP_0])
+#    x = odeint(deriv, zinit, time) # run the simulation
+#    times.append(np.min(np.where(x[:,4] < 1)))
+#    
+#    
+#f = plt.figure(figsize=(10,5))
+#ax = f.add_subplot(111)
+#ax.plot(T, times)
+#ax.set_xlabel("Shock temperature (C)")
+#ax.set_ylabel("Time to clear unfolded protein/clients (min)")
+#ax.set_yscale("log")
+#ax.annotate("[P](0) = 0.0024*exp(0.215*temp)", (35, 500))
 
